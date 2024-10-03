@@ -155,7 +155,7 @@ public class AddressBookMain {
 
             switch (choice) {
                 case 1:
-                    addNewContact(scanner, addressBook);
+                    addMultipleContacts(scanner, addressBook);
                     break;
                 case 2:
                     viewAllContacts(addressBook);
@@ -175,6 +175,18 @@ public class AddressBookMain {
         }
 
         scanner.close();
+    }
+
+    private static void addMultipleContacts(Scanner scanner, AddressBook addressBook) {
+        boolean addMore = true;
+        while (addMore) {
+            addNewContact(scanner, addressBook);
+            System.out.print("Do you want to add another contact? (yes/no): ");
+            String response = scanner.nextLine();
+            if (response.equalsIgnoreCase("no")) {
+                addMore = false;
+            }
+        }
     }
 
     private static void addNewContact(Scanner scanner, AddressBook addressBook) {
