@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Scanner;
+import java.util.stream.Collectors;
 
 class Contact {
     private String firstName;
@@ -94,6 +95,20 @@ class Contact {
                 ", pinCode='" + pinCode + '\'' +
                 '}';
     }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) return true;
+        if (!(obj instanceof Contact)) return false;
+        Contact contact = (Contact) obj;
+        return firstName.equalsIgnoreCase(contact.firstName) &&
+                lastName.equalsIgnoreCase(contact.lastName);
+    }
+
+    @Override
+    public int hashCode() {
+        return (firstName.toLowerCase() + lastName.toLowerCase()).hashCode();
+    }
 }
 
 class AddressBook {
@@ -104,7 +119,16 @@ class AddressBook {
     }
 
     public void addContact(Contact contact) {
-        this.contacts.add(contact);
+        if (!isDuplicate(contact)) {
+            this.contacts.add(contact);
+            System.out.println("Contact added successfully!");
+        } else {
+            System.out.println("Duplicate entry! Contact with the same name already exists.");
+        }
+    }
+
+    public boolean isDuplicate(Contact contact) {
+        return contacts.stream().anyMatch(existingContact -> existingContact.equals(contact));
     }
 
     public Contact findContactByName(String firstName, String lastName) {
@@ -271,7 +295,6 @@ public class AddressBookMain {
 
         Contact contact = new Contact(firstName, lastName, city, state, email, phoneNumber, pinCode);
         addressBook.addContact(contact);
-        System.out.println("Contact added successfully!");
     }
 
     private static void viewAllContacts(AddressBook addressBook) {
@@ -309,10 +332,9 @@ public class AddressBookMain {
             }
 
             System.out.print("Enter new Phone Number (leave blank to keep current): ");
-            String phoneNumberStr = scanner.nextLine();
-            if (!phoneNumberStr.isBlank()) {
-                long phoneNumber = Long.parseLong(phoneNumberStr);
-                contact.setPhoneNumber(phoneNumber);
+            String phoneNumberInput = scanner.nextLine();
+            if (!phoneNumberInput.isBlank()) {
+                contact.setPhoneNumber(Long.parseLong(phoneNumberInput));
             }
 
             System.out.print("Enter new Pin Code (leave blank to keep current): ");
