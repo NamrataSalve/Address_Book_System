@@ -1,7 +1,9 @@
 package com.addressbooksystem;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Scanner;
 
 class Contact {
@@ -136,18 +138,75 @@ class AddressBook {
 }
 
 public class AddressBookMain {
+    private static Map<String, AddressBook> addressBookMap = new HashMap<>();
+
     public static void main(String[] args) {
-        AddressBook addressBook = new AddressBook();
         Scanner scanner = new Scanner(System.in);
         boolean exit = false;
 
         while (!exit) {
-            System.out.println("Address Book Menu:");
+            System.out.println("Address Book System Menu:");
+            System.out.println("1. Create New Address Book");
+            System.out.println("2. Select Address Book");
+            System.out.println("3. Exit");
+            System.out.print("Choose an option: ");
+
+            int choice = scanner.nextInt();
+            scanner.nextLine(); // consume newline
+
+            switch (choice) {
+                case 1:
+                    createNewAddressBook(scanner);
+                    break;
+                case 2:
+                    selectAddressBook(scanner);
+                    break;
+                case 3:
+                    exit = true;
+                    break;
+                default:
+                    System.out.println("Invalid choice. Please try again.");
+            }
+        }
+
+        scanner.close();
+    }
+
+    private static void createNewAddressBook(Scanner scanner) {
+        System.out.print("Enter a unique name for the Address Book: ");
+        String addressBookName = scanner.nextLine();
+
+        if (addressBookMap.containsKey(addressBookName)) {
+            System.out.println("An Address Book with this name already exists.");
+        } else {
+            AddressBook addressBook = new AddressBook();
+            addressBookMap.put(addressBookName, addressBook);
+            System.out.println("Address Book '" + addressBookName + "' created successfully!");
+        }
+    }
+
+    private static void selectAddressBook(Scanner scanner) {
+        System.out.print("Enter the name of the Address Book to select: ");
+        String addressBookName = scanner.nextLine();
+
+        if (addressBookMap.containsKey(addressBookName)) {
+            AddressBook addressBook = addressBookMap.get(addressBookName);
+            manageAddressBook(scanner, addressBook);
+        } else {
+            System.out.println("Address Book not found.");
+        }
+    }
+
+    private static void manageAddressBook(Scanner scanner, AddressBook addressBook) {
+        boolean manageMore = true;
+
+        while (manageMore) {
+            System.out.println("Managing Address Book:");
             System.out.println("1. Add New Contact");
             System.out.println("2. View All Contacts");
             System.out.println("3. Edit Contact");
             System.out.println("4. Delete Contact");
-            System.out.println("5. Exit");
+            System.out.println("5. Back to Main Menu");
             System.out.print("Choose an option: ");
 
             int choice = scanner.nextInt();
@@ -167,14 +226,12 @@ public class AddressBookMain {
                     deleteContact(scanner, addressBook);
                     break;
                 case 5:
-                    exit = true;
+                    manageMore = false;
                     break;
                 default:
                     System.out.println("Invalid choice. Please try again.");
             }
         }
-
-        scanner.close();
     }
 
     private static void addMultipleContacts(Scanner scanner, AddressBook addressBook) {
