@@ -114,6 +114,15 @@ class AddressBook {
         return null;
     }
 
+    public boolean deleteContactByName(String firstName, String lastName) {
+        Contact contact = findContactByName(firstName, lastName);
+        if (contact != null) {
+            contacts.remove(contact);
+            return true;
+        }
+        return false;
+    }
+
     public List<Contact> getContacts() {
         return contacts;
     }
@@ -137,7 +146,8 @@ public class AddressBookMain {
             System.out.println("1. Add New Contact");
             System.out.println("2. View All Contacts");
             System.out.println("3. Edit Contact");
-            System.out.println("4. Exit");
+            System.out.println("4. Delete Contact");
+            System.out.println("5. Exit");
             System.out.print("Choose an option: ");
 
             int choice = scanner.nextInt();
@@ -154,6 +164,9 @@ public class AddressBookMain {
                     editContact(scanner, addressBook);
                     break;
                 case 4:
+                    deleteContact(scanner, addressBook);
+                    break;
+                case 5:
                     exit = true;
                     break;
                 default:
@@ -240,6 +253,22 @@ public class AddressBookMain {
             }
 
             System.out.println("Contact updated successfully!");
+        } else {
+            System.out.println("Contact not found.");
+        }
+    }
+
+    private static void deleteContact(Scanner scanner, AddressBook addressBook) {
+        System.out.print("Enter the First Name of the contact to delete: ");
+        String firstName = scanner.nextLine();
+
+        System.out.print("Enter the Last Name of the contact to delete: ");
+        String lastName = scanner.nextLine();
+
+        boolean isDeleted = addressBook.deleteContactByName(firstName, lastName);
+
+        if (isDeleted) {
+            System.out.println("Contact deleted successfully!");
         } else {
             System.out.println("Contact not found.");
         }
