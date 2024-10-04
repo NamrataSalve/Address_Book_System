@@ -201,11 +201,15 @@ class AddressBook {
         return stateDictionary.getOrDefault(state.toLowerCase(), new ArrayList<>()).size();
     }
 
+    public void sortContactsByName() {
+        Collections.sort(contacts, Comparator.comparing(Contact::getFirstName).thenComparing(Contact::getLastName));
+    }
+
     @Override
     public String toString() {
-        return "AddressBook{" +
-                "contacts=" + contacts +
-                '}';
+        return contacts.stream()
+                .map(Contact::toString)
+                .collect(Collectors.joining("\n"));
     }
 }
 
@@ -222,7 +226,8 @@ public class AddressBookMain {
             System.out.println("2. Select Address Book");
             System.out.println("3. Search Across Address Books");
             System.out.println("4. Get Count by City or State");
-            System.out.println("5. Exit");
+            System.out.println("5. Sort Contacts by Name");
+            System.out.println("6. Exit");
             System.out.print("Choose an option: ");
 
             int choice = scanner.nextInt();
@@ -242,6 +247,9 @@ public class AddressBookMain {
                     getCountByCityOrState(scanner);
                     break;
                 case 5:
+                    sortContactsByName(scanner);
+                    break;
+                case 6:
                     exit = true;
                     break;
                 default:
@@ -518,6 +526,20 @@ public class AddressBookMain {
                 break;
             default:
                 System.out.println("Invalid choice. Please try again.");
+        }
+    }
+
+    private static void sortContactsByName(Scanner scanner) {
+        System.out.print("Enter the name of the Address Book to sort: ");
+        String addressBookName = scanner.nextLine();
+
+        if (addressBookMap.containsKey(addressBookName)) {
+            AddressBook addressBook = addressBookMap.get(addressBookName);
+            addressBook.sortContactsByName();
+            System.out.println("Contacts in Address Book '" + addressBookName + "' sorted by name:");
+            viewAllContacts(addressBook);
+        } else {
+            System.out.println("Address Book not found.");
         }
     }
 }
